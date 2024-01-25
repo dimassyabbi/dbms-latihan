@@ -1,0 +1,47 @@
+5.	Buatlah trigger yang dapat melakukan perubahan stok mobil saat terjadi penyewaan (PS : query trigger) 
+
+CREATE TRIGGER after_insert_Sewa
+AFTER INSERT ON sewa0036
+FOR EACH ROW
+BEGIN
+  update mobil0036
+    set Stok_mobil = Stok_mobil - new.Jumlah_Sewa
+  where Kode_mobil = new.Kode_mobil;
+END;
+
+6.	Buatlah trigger yang dapat melakukan perubahan stok mobil saat pengembalian mobil untuk mengetahui stok akhir (PS : query trigger) 
+
+CREATE TRIGGER after_insert_kembali 
+AFTER INSERT ON trans_kembali0036 
+FOR EACH ROW
+BEGIN 
+update mobil0036 set Stok_mobil = Stok_mobil + new.Jumlah_kembali where Kode_mobil = new.Kode_mobil; END;
+
+8.	Buat view (view1) untuk menampilkan kodemobil, jenis mobil, dan stok mobil (PS : query view dan isi data view) 
+
+CREATE VIEW view1 AS SELECT Kode_mobil, Jenis_mobil, Stok_mobil FROM mobil0036;
+
+10.	Buat view (view2) untuk menampilkan kode mobil, harga sewa, dan stok mobil (PS : query view dan isi data view) 
+
+CREATE VIEW view2 AS SELECT Kode_mobil, Harga_sewa_per_hari, Stok_mobil FROM mobil0036;
+
+12.	Buat trigger untuk menangkap kejadian perubahan stok lama dan stok baru yg terjadi pada tabel mobilxxxx yang dicatat di tabel log_mobil (PS : query trigger) 
+
+CREATE TRIGGER Before_Sewa_Update BEFORE UPDATE ON mobil0036 FOR EACH ROW INSERT INTO log_mobil SET Kode_mobil = OLD.Kode_mobil, Stok_baru = new.Stok_mobil, Stok_lama = old.Stok_mobil,
+waktu_perubahan = now();
+
+14.	Buat trigger yang dapat merubah status keterangan menjadi “Ready” saat terjadi pengembalian 
+
+CREATE TRIGGER after_insert_trans_kembali0036 AFTER INSERT ON trans_kembali0036 FOR EACH ROW BEGIN UPDATE mobil0036 SET keterangan = 'Ready' WHERE Kode_mobil = NEW.Kode_mobil; END ;;
+
+16.	Buat view (view3) untuk menampilkan data log_id, kode mobil, stok lama, dan stok baru (PS : query view dan isi data view) 
+
+CREATE VIEW view3 AS SELECT log_id, Kode_mobil, Stok_lama, Stok_baru FROM log_mobil;
+
+17.	Buat view (view4) untuk menampilkan data kode mobil, stok , keterangan.dengan ketentuan: jika stok lebih dari 5 maka “banyak”, jika kurang dari 5 maka “sedikit” 
+
+CREATE VIEW view4 AS SELECT Kode_mobil, Stok_mobil AS Stok, CASE WHEN Stok_mobil > 5 THEN 'Banyak' WHEN Stok_mobil <= 5 THEN 'Sedikit' ELSE 'Tidak Diketahui' END AS Keterangan_Stok FROM mobil0036;
+
+
+
+
