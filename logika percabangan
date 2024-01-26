@@ -1,0 +1,37 @@
+1.Tampilkan nama nasabah yang dan kelurahan. Jika Medono = M, jika Podosugih = P dan jika
+Kauman = K
+
+SELECT Nama_Nasabah, kelurahan, IF(kelurahan = "Medono", "M", if(kelurahan = "Podosugih", "P", "K")) as "Kode Kelurahan" FROM nasabah;
+
+2.Tampilkan nama_nasabah, alamat, tanggal, nominal, kode jenis, jenis tabungan
+Keterangan jika kode jenis = 1 maka “Tabungan Giro”, jika kode jenis = 2 maka “Tabungan
+Konvensional” dan jika kode jenis = 3 maka “Tabungan Anak”
+
+SELECT na.nama_nasabah, na.alamat, tr.tanggal, tr.nominal, jt.kode_jenis,
+if(jt.kode_jenis = '1', "Tabungan Giro",if(jt.kode_jenis = "2", "Tabungan Konvensional", "Tabungan Anak")) as "Jenis Tabungan"
+FROM nasabah na, jenis transaksi jt, transaksi tr
+WHERE na.No_Rekening=tr.no_rekening AND jt.Kode_Jenis=tr.kode_jenis
+
+3.Tampilkan no rekening, nama nasabah, tanggal, total nominal dan hadiah
+Keterangan jika total nominal lebih dari sama dengan 5.000.000 mendapat payung, kurang dari
+5.000.000 tidak mendapat hadiah
+
+SELECT na.no_rekening, na.nama_nasabah, tr.tanggal, SUM(nominal),
+IF(SUM(nominal) >= 5000000, "Mendapat Payung", "Tidak Mendapat Hadiah")
+AS "Hadiah"
+FROM nasabah na, transaksi tr
+WHERE na.No_Rekening=tr.No_Rekening
+GROUP BY na.No_Rekening
+
+4.Tampilkan no rekening, nama nasabah, jenis transaksi, tanggal, total nominal, hadiah
+Keterangan jika total nominal &gt;= 10.000.000 maka mendapat jam dinding, jika total nominal &gt;=
+5.000.000 maka mendapat kaos, jika &lt; 5.000.000 maka tidak mendapat hadiah. Dengan ketentuan
+yang total nominal &gt; 1.000.000 yang ditampilkan
+
+select ma.no_rekening, na.nama_nasabah, jt.Jenis_Transaksi, tr.tanggal, sum(tr.nominal) as "Total Tabungan",
+if(sum(nominal) >= 10000000, "Mendapat Jam dinding",if(sum(nominal) >= 5000000, "Mendapat Kaos","Tidak Mendapat Hadiah")) as "Hadiah"
+FROM nasabah na, jenis transaksi jt, transaksi tr
+where na.No_Rekening=tr.no_rekening AND jt.Kode_Jenis=tr.kode_jenis
+GROUP BY na.No_Rekening
+having sum(tr.nominal) >= 2500000
+
